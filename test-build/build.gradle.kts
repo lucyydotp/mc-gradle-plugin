@@ -3,7 +3,7 @@ plugins {
 }
 
 paper {
-    version = "1.20.2-R0.1-SNAPSHOT"
+    version = "1.20.2"
 //    userdev = true
 }
 

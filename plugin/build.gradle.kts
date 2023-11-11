@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     implementation("io.papermc.paperweight:paperweight-userdev:1.5.9")
+    implementation("xyz.jpenilla:run-task:2.2.0")
 }
 
 gradlePlugin {
