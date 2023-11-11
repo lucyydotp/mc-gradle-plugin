@@ -35,6 +35,13 @@ gradlePlugin {
     }
 }
 
-publishing {
-    repositories.maven("https://maven.lucyydotp.me/releases")
+publishing.repositories.maven {
+    url = uri("https://maven.lucypoulton.net/releases")
+    val LUCY_MAVEN_USER: String by project
+    val LUCY_MAVEN_TOKEN: String by project
+    credentials {
+        username = LUCY_MAVEN_USER
+        password = LUCY_MAVEN_TOKEN
+    }
 }
+
