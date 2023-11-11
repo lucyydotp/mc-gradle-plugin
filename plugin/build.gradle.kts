@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.20"
     `java-gradle-plugin`
+    `maven-publish`
 }
 
 group = "me.lucyydotp"
@@ -17,8 +18,11 @@ repositories {
 }
 
 dependencies {
+    implementation(gradleKotlinDsl())
+
     implementation("io.papermc.paperweight:paperweight-userdev:1.5.9")
-    implementation("xyz.jpenilla:run-task:2.2.0")
+    api("xyz.jpenilla:run-task:2.2.0")
+    api("com.github.johnrengelman:shadow:8.1.1")
 }
 
 gradlePlugin {
@@ -28,4 +32,8 @@ gradlePlugin {
             implementationClass = "me.lucyydotp.mcgradle.PaperPlugin"
         }
     }
+}
+
+publishing {
+    repositories.maven("https://maven.lucyydotp.me/releases")
 }

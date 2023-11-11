@@ -4,8 +4,20 @@ plugins {
 
 paper {
     version = "1.20.2"
-//    userdev = true
+    userdev = true
 }
+
+relocate {
+    targetPackage = "me.lucyydotp.mcgradle.papertest.shadow"
+    "com.google.gson" to "gson"
+}
+
+dependencies {
+    // just imagine the repo is configured
+    pluginRuntime("maven.modrinth:essentialsx:2.20.1")
+    shadow("com.google.code.gson:gson:2.10.1")
+}
+
 
 repositories {
     exclusiveContent {
@@ -21,6 +33,3 @@ repositories {
     }
 }
 
-dependencies {
-    pluginRuntime("maven.modrinth:essentialsx:2.20.1")
-}
