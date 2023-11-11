@@ -54,17 +54,16 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
 
     init {
         outputs.dir(outDir)
-    }
-
-    @TaskAction
-    public fun createPluginYml() {
-        val extension = project.extensions.getByType<PaperConfig>()
-
         project.extensions.getByType<SourceSetContainer>()
             .named(SourceSet.MAIN_SOURCE_SET_NAME)
             .configure {
                 it.output.dir(outDir)
             }
+    }
+
+    @TaskAction
+    public fun createPluginYml() {
+        val extension = project.extensions.getByType<PaperConfig>()
 
         val file = mapOf(
             "name" to project.name,

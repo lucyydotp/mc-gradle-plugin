@@ -69,6 +69,10 @@ internal fun Project.applyPaper() {
             task.pluginJars(pluginRuntime.resolvedConfiguration.files)
         }
     }
+
+    tasks.named("build") {
+        it.dependsOn("reobfJar")
+    }
 }
 
 public class PaperPlugin : Plugin<Project> {
