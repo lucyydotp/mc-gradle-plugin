@@ -13,6 +13,8 @@ import org.gradle.internal.impldep.org.yaml.snakeyaml.Yaml
 import org.gradle.kotlin.dsl.getByType
 import java.util.zip.ZipFile
 
+private val yaml = Yaml()
+
 /**
  * Generates a Paper `paper-plugin.yml` file.
  */
@@ -28,7 +30,6 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
     )
 
     private fun Project.dependencyPlugins() = buildList {
-        val yaml = Yaml()
         val config = configurations.named(PLUGIN_RUNTIME).get()
         config.dependencies.forEach {
             if (it !is ModuleDependency) return@forEach
