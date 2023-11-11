@@ -1,7 +1,10 @@
 package me.lucyydotp.mcgradle.paper
 
+import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.PLUGIN_RUNTIME
+import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.optional
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
@@ -9,6 +12,9 @@ import org.gradle.internal.impldep.org.yaml.snakeyaml.Yaml
 import org.gradle.kotlin.dsl.getByType
 import java.util.zip.ZipFile
 
+/**
+ * Generates a Paper `paper-plugin.yml` file.
+ */
 
 public abstract class PaperPluginYmlTask : DefaultTask() {
 
@@ -18,14 +24,19 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
         private val yaml = Yaml()
     }
 
-    private fun Project.dependencyPluginNames() = configurations.named("pluginRuntime").get().map { ZipFile(it) }
-        .mapNotNull { zipFile ->
-            val entry = listOf("plugin.yml", "paper-plugin.yml").firstNotNullOfOrNull { zipFile.getEntry(it) }
-                ?: return@mapNotNull null
-            val parsedYaml: Map<String, Any> = yaml.load(zipFile.getInputStream(entry))
-            parsedYaml["name"].toString()
+    private fun Project.dependencyPlugins() = buildList {
+        val config = configurations.named(PLUGIN_RUNTIME).get()
+        config.dependencies.forEach {
+            val optional = (it as? ModuleDependency ?: return@forEach).optional
+            config.fileCollection(it).forEach files@{ file ->
+                val zipFile = ZipFile(file)
+                val entry = listOf("plugin.yml", "paper-plugin.yml").firstNotNullOfOrNull { zipFile.getEntry(it) }
+                    ?: return@files
+                val parsedYaml: Map<String, Any> = yaml.load(zipFile.getInputStream(entry))
+                add(parsedYaml["name"].toString() to optional)
+            }
         }
-
+    }
 
     init {
         outputs.dir(outDir)
@@ -48,10 +59,13 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
                     "version" to project.version,
                     "main" to extension.mainClass.get(),
                     "dependencies" to buildMap {
-                        project.dependencyPluginNames().forEach {
+                        project.dependencyPlugins().forEach { (name, optional) ->
                             put(
-                                it, mapOf(
-                                    "required" to true
+                                name, mapOf(
+                                    "required" to when (optional) {
+                                        OptionalState.OPTIONAL -> false
+                                        OptionalState.REQUIRED -> true
+                                    }
                                 )
                             )
                         }

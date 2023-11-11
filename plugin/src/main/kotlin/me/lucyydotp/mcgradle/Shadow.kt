@@ -23,6 +23,13 @@ public abstract class RelocateExtension {
     }
 }
 
+/**
+ * Sets up shading for the project using shadow:
+ * - Applies the [ShadowJavaPlugin].
+ * - Creates the `shadow` configuration for shaded dependencies, that extends `implementation`.
+ * - Creates the [`relocate` extension][RelocateExtension], and configures shadow to use it.
+ * - Makes the `build` task depend on `shadowJar`.
+ */
 internal fun Project.applyShadow() {
     val relocateExtension = project.extensions.create<RelocateExtension>("relocate")
 
