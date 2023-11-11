@@ -1,3 +1,5 @@
+import me.lucyydotp.mcgradle.paper.LoadOrder
+import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.loadOrder
 import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.optional
 
 plugins {
@@ -18,6 +20,7 @@ dependencies {
     // just imagine the repo is configured
     pluginRuntime("maven.modrinth:essentialsx:2.20.1") {
         optional()
+        loadOrder = LoadOrder.BEFORE
     }
     shadow("com.google.code.gson:gson:2.10.1")
 }

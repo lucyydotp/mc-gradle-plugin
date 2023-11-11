@@ -5,8 +5,6 @@ import io.papermc.paperweight.userdev.PaperweightUserDependenciesExtension
 import me.lucyydotp.mcgradle.applyShadow
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Property
 import org.gradle.jvm.tasks.Jar
@@ -18,42 +16,22 @@ import org.gradle.kotlin.dsl.withType
 import xyz.jpenilla.runpaper.RunPaperPlugin
 import xyz.jpenilla.runpaper.task.RunServer
 
+/** Paper configuration. */
 public interface PaperConfig {
-    public val version: Property<String>
-    public val mainClass: Property<String>
-}
-
-public enum class OptionalState {
-    REQUIRED,
-    OPTIONAL
-}
-
-/** Utilities for paper dependencies. */
-public object PaperDependencyConfiguration {
     /**
-     * The name of the plugin runtime configuration.
-     *
-     * This configuration extends `implementation`. Dependencies will be added as dependencies
-     * to `paper-plugin.yml`, with their required state determined by [OPTIONAL].
+     * The Minecraft version to use.
+     * Note that this is a game version, i.e. `1.20.2`, and not an API version.
      */
-    public const val PLUGIN_RUNTIME: String = "pluginRuntime"
+    public val version: Property<String>
 
-    // TODO: is using an attribute the right idea here?
-    public val OPTIONAL: Attribute<OptionalState> = Attribute.of("me.lucyydotp.minecraft.optional", OptionalState::class.java)
+    /** The plugin's main class. */
+    public val mainClass: Property<String>
 
-    /** Makes the dependency optional. If true, the plugin will load without this plugin installed. */
-    public fun ModuleDependency.optional() {
-        optional = OptionalState.OPTIONAL
-    }
-
-    /** Whether the module is optional for the plugin to load on a server. */
-    public var ModuleDependency.optional: OptionalState
-        set(value) {
-            attributes {
-                it.attribute(OPTIONAL, value)
-            }
-        }
-        get() = attributes.getAttribute(OPTIONAL) ?: OptionalState.REQUIRED
+    /**
+     * The plugin's API version.
+     * If not specified, it's derived from [version].
+     */
+    public val apiVersion: Property<String>
 }
 
 internal fun Project.applyPaper() {
@@ -61,6 +39,10 @@ internal fun Project.applyPaper() {
     apply<RunPaperPlugin>()
 
     val paperConfig = extensions.create<PaperConfig>("paper")
+
+    paperConfig.apiVersion.convention(paperConfig.version.map {
+        it.split('.').take(2).joinToString(".")
+    })
 
     // Set up paperweight.
     apply<PaperweightUser>()
@@ -71,12 +53,11 @@ internal fun Project.applyPaper() {
     }
 
     // Set up the plugin runtime configuration.
-    val pluginRuntime = configurations.create("pluginRuntime")
+    val pluginRuntime = configurations.create(PaperDependencyConfiguration.PLUGIN_RUNTIME)
     configurations.named("compileOnly").configure { it.extendsFrom(pluginRuntime) }
 
-    val pluginYmlTask = tasks.register<PaperPluginYmlTask>("pluginYml") {
-        mustRunAfter("classes")
-    }
+    // Create the paper-plugin.yml task.
+    val pluginYmlTask = tasks.register<PaperPluginYmlTask>("pluginYml")
 
     tasks.withType<Jar> {
         dependsOn(pluginYmlTask)
