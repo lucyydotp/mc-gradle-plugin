@@ -15,21 +15,22 @@ kotlin {
 repositories {
     mavenCentral()
     gradlePluginPortal()
+//    maven("https://oss.sonatype.org/content/groups/public/")
 }
 
 dependencies {
-    implementation(gradleKotlinDsl())
-
-    implementation("io.papermc.paperweight:paperweight-userdev:1.5.9")
+    api("io.papermc.paperweight:paperweight-userdev:1.5.9")
     api("xyz.jpenilla:run-task:2.2.0")
     api("com.github.johnrengelman:shadow:8.1.1")
+
+    implementation(gradleKotlinDsl())
 }
 
 gradlePlugin {
     plugins {
         create("paper") {
             id = "me.lucyydotp.minecraft.paper"
-            implementationClass = "me.lucyydotp.mcgradle.PaperPlugin"
+            implementationClass = "me.lucyydotp.mcgradle.paper.PaperPlugin"
         }
     }
 }

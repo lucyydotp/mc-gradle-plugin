@@ -1,5 +1,0 @@
-name: "gradle-test-plugin"
-version: "$version"
-main: "me.lucyydotp.mcgradle.papertest.PaperTestPlugin"
-depend:
-  - "Essentials"

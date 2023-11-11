@@ -4,7 +4,7 @@ plugins {
 
 paper {
     version = "1.20.2"
-    userdev = true
+    mainClass = "me.lucyydotp.mcgradle.papertest.PaperTestPlugin"
 }
 
 relocate {

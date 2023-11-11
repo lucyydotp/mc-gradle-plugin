@@ -1,20 +1,24 @@
-package me.lucyydotp.mcgradle
+package me.lucyydotp.mcgradle.paper
 
 import io.papermc.paperweight.userdev.PaperweightUser
 import io.papermc.paperweight.userdev.PaperweightUserDependenciesExtension
+import me.lucyydotp.mcgradle.applyShadow
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Property
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import xyz.jpenilla.runpaper.RunPaperPlugin
 import xyz.jpenilla.runpaper.task.RunServer
 
 public interface PaperConfig {
     public val version: Property<String>
+    public val mainClass: Property<String>
 }
 
 internal fun Project.applyPaper() {
@@ -34,6 +38,14 @@ internal fun Project.applyPaper() {
     // Set up the plugin runtime configuration.
     val pluginRuntime = configurations.create("pluginRuntime")
     configurations.named("compileOnly").configure { it.extendsFrom(pluginRuntime) }
+
+    val pluginYmlTask = tasks.register<PaperPluginYmlTask>("pluginYml") {
+        mustRunAfter("classes")
+    }
+
+    tasks.withType<Jar> {
+        dependsOn(pluginYmlTask)
+    }
 
     afterEvaluate {
         tasks.withType<RunServer>().configureEach { task ->
