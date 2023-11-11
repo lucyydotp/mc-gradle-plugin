@@ -21,10 +21,6 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
 
     private val outDir = project.layout.buildDirectory.dir("generated/plugin-yml")
 
-    private companion object {
-        private val yaml = Yaml()
-    }
-
     internal data class PaperDependency(
         val name: String,
         val optional: OptionalState,
@@ -32,6 +28,7 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
     )
 
     private fun Project.dependencyPlugins() = buildList {
+        val yaml = Yaml()
         val config = configurations.named(PLUGIN_RUNTIME).get()
         config.dependencies.forEach {
             if (it !is ModuleDependency) return@forEach
