@@ -58,18 +58,20 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
                     "name" to project.name,
                     "version" to project.version,
                     "main" to extension.mainClass.get(),
-                    "dependencies" to buildMap {
-                        project.dependencyPlugins().forEach { (name, optional) ->
-                            put(
-                                name, mapOf(
-                                    "required" to when (optional) {
-                                        OptionalState.OPTIONAL -> false
-                                        OptionalState.REQUIRED -> true
-                                    }
+                    "dependencies" to mapOf(
+                        "server" to buildMap {
+                            project.dependencyPlugins().forEach { (name, optional) ->
+                                put(
+                                    name, mapOf(
+                                        "required" to when (optional) {
+                                            OptionalState.OPTIONAL -> false
+                                            OptionalState.REQUIRED -> true
+                                        }
+                                    )
                                 )
-                            )
+                            }
                         }
-                    }
+                    )
                 )
             )
         )
