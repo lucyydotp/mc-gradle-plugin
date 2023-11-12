@@ -33,7 +33,9 @@ public abstract class RelocateExtension {
 internal fun Project.applyShadow() {
     val relocateExtension = project.extensions.create<RelocateExtension>("relocate")
 
-    val shadowConfiguration = configurations.create("shadow")
+    val shadowConfiguration = configurations.create("shadow") {
+        it.isTransitive = false
+    }
     configurations.named("implementation").configure { it.extendsFrom(shadowConfiguration) }
 
     apply<ShadowJavaPlugin>()
