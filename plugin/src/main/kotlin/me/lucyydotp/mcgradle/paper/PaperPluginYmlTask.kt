@@ -3,6 +3,7 @@ package me.lucyydotp.mcgradle.paper
 import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.PLUGIN_RUNTIME
 import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.loadOrder
 import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.optional
+import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.pluginJars
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
@@ -33,6 +34,7 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
 
     private fun Project.dependencyPlugins() = buildList {
         val config = configurations.named(PLUGIN_RUNTIME).get()
+        config.pluginJars()
         config.dependencies.forEach {
             if (it !is ModuleDependency) return@forEach
             config.fileCollection(it).forEach files@{ file ->
@@ -54,6 +56,8 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
 
     init {
         outputs.dir(outDir)
+        // FIXME
+        outputs.upToDateWhen { false }
         project.extensions.getByType<SourceSetContainer>()
             .named(SourceSet.MAIN_SOURCE_SET_NAME)
             .configure {

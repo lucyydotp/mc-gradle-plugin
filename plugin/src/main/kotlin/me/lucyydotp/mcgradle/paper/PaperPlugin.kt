@@ -3,6 +3,7 @@ package me.lucyydotp.mcgradle.paper
 import io.papermc.paperweight.userdev.PaperweightUser
 import io.papermc.paperweight.userdev.PaperweightUserDependenciesExtension
 import me.lucyydotp.mcgradle.applyShadow
+import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.pluginJars
 import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -78,7 +79,7 @@ internal fun Project.applyPaper() {
     afterEvaluate {
         tasks.withType<RunServer>().configureEach { task ->
             task.version.set(paperConfig.version)
-            task.pluginJars(pluginRuntime.resolvedConfiguration.files)
+            task.pluginJars(pluginRuntime.pluginJars())
         }
     }
 

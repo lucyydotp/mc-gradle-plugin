@@ -1,7 +1,11 @@
 package me.lucyydotp.mcgradle.paper
 
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.attributes.Attribute
+import java.io.File
 
 /** Utilities for paper dependencies. */
 public object PaperDependencyConfiguration {
@@ -43,6 +47,14 @@ public object PaperDependencyConfiguration {
             }
         }
         get() = attributes.getAttribute(LOAD_ORDER) ?: LoadOrder.OMIT
+
+    public fun Configuration.pluginJar(dep: Dependency): File = when (dep) {
+        is ProjectDependency -> dep.dependencyProject.tasks.getByName("reobfJar").outputs.files.singleFile
+        is ModuleDependency -> fileCollection(dep).singleFile
+        else -> error("Can't find plugin jar for $dep!")
+    }
+
+    public fun Configuration.pluginJars(): List<File> = dependencies.map { pluginJar(it) }
 }
 
 /** Whether a dependency plugin is required. */
