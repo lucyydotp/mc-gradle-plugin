@@ -36,12 +36,16 @@ internal fun Project.applyShadow() {
     val shadowConfiguration = configurations.create("shadow") {
         it.isTransitive = false
     }
+    val shadowApiConfiguration = configurations.create("shadowApi") {
+        it.isTransitive = false
+    }
     configurations.named("implementation").configure { it.extendsFrom(shadowConfiguration) }
+    configurations.named("api").configure { it.extendsFrom(shadowApiConfiguration) }
 
     apply<ShadowJavaPlugin>()
 
     val shadow = tasks.named<ShadowJar>("shadowJar") {
-        configurations = listOf(shadowConfiguration)
+        configurations = listOf(shadowConfiguration, shadowApiConfiguration)
     }
 
     afterEvaluate {
