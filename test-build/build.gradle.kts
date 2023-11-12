@@ -19,7 +19,6 @@ relocate {
 }
 
 dependencies {
-    // just imagine the repo is configured
     pluginRuntime("maven.modrinth:essentialsx:2.20.1") {
         optional()
         loadOrder = LoadOrder.BEFORE
