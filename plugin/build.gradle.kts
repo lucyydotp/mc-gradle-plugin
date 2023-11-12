@@ -23,6 +23,7 @@ dependencies {
     api("xyz.jpenilla:run-task:2.2.0")
     api("com.github.johnrengelman:shadow:8.1.1")
 
+    implementation("org.yaml:snakeyaml:2.2")
     implementation(gradleKotlinDsl())
 }
 

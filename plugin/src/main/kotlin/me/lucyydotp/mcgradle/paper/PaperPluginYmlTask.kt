@@ -9,11 +9,9 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
-import org.gradle.internal.impldep.org.yaml.snakeyaml.Yaml
 import org.gradle.kotlin.dsl.getByType
+import org.yaml.snakeyaml.Yaml
 import java.util.zip.ZipFile
-
-private val yaml = Yaml()
 
 /**
  * Generates a Paper `paper-plugin.yml` file.
@@ -22,6 +20,10 @@ private val yaml = Yaml()
 public abstract class PaperPluginYmlTask : DefaultTask() {
 
     private val outDir = project.layout.buildDirectory.dir("generated/plugin-yml")
+
+    private companion object {
+        private val yaml = Yaml()
+    }
 
     internal data class PaperDependency(
         val name: String,
