@@ -40,7 +40,6 @@ internal fun Project.applyShadow() {
         it.isTransitive = false
     }
     configurations.named("implementation").configure { it.extendsFrom(shadowConfiguration) }
-    configurations.named("api").configure { it.extendsFrom(shadowApiConfiguration) }
 
     apply<ShadowJavaPlugin>()
 
@@ -49,6 +48,8 @@ internal fun Project.applyShadow() {
     }
 
     afterEvaluate {
+        configurations.find { it.name == "api" }?.extendsFrom(shadowApiConfiguration)
+
         tasks.named<ShadowJar>("shadowJar") {
             relocateExtension.relocations.get().forEach { (old, new) ->
                 relocate(old, "${relocateExtension.targetPackage.get()}.$new")
