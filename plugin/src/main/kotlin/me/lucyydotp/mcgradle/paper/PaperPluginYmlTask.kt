@@ -34,7 +34,6 @@ public abstract class PaperPluginYmlTask : DefaultTask() {
 
     private fun Project.dependencyPlugins() = buildList {
         val config = configurations.named(PLUGIN_RUNTIME).get()
-        config.pluginJars()
         config.dependencies.forEach {
             if (it !is ModuleDependency) return@forEach
             config.fileCollection(it).forEach files@{ file ->

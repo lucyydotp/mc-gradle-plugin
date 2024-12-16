@@ -1,5 +1,6 @@
 package me.lucyydotp.mcgradle.paper
 
+import org.gradle.api.UnknownTaskException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleDependency
@@ -49,7 +50,14 @@ public object PaperDependencyConfiguration {
         get() = attributes.getAttribute(LOAD_ORDER) ?: LoadOrder.OMIT
 
     public fun Configuration.pluginJar(dep: Dependency): File = when (dep) {
-        is ProjectDependency -> dep.dependencyProject.tasks.getByName("reobfJar").outputs.files.singleFile
+        is ProjectDependency -> dep.dependencyProject.tasks.let {
+            try {
+                it.getByName("shadowJar")
+            } catch (ex: UnknownTaskException) {
+                it.getByName("jar")
+            }
+        }
+            .outputs.files.singleFile
         is ModuleDependency -> fileCollection(dep).singleFile
         else -> error("Can't find plugin jar for $dep!")
     }

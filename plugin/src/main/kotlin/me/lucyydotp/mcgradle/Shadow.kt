@@ -39,7 +39,7 @@ internal fun Project.applyShadow() {
     apply<ShadowJavaPlugin>()
 
     val shadow = tasks.named<ShadowJar>("shadowJar") {
-        configurations = listOf(shadowConfiguration, shadowApiConfiguration)
+        configurations.set(listOf(shadowConfiguration, shadowApiConfiguration))
     }
 
     afterEvaluate {

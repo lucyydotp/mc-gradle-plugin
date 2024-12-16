@@ -1,11 +1,12 @@
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "2.0.10"
+    id("com.gradle.plugin-publish") version "1.3.0"
     `java-gradle-plugin`
     `maven-publish`
 }
 
 group = "me.lucyydotp"
-version = "1.0-SNAPSHOT"
+version = "0.1.3"
 
 kotlin {
     jvmToolchain(8)
@@ -19,9 +20,9 @@ repositories {
 }
 
 dependencies {
-    api("io.papermc.paperweight:paperweight-userdev:1.5.9")
-    api("xyz.jpenilla:run-task:2.2.0")
-    api("com.github.johnrengelman:shadow:8.1.1")
+    api("io.papermc.paperweight:paperweight-userdev:1.7.7")
+    api("xyz.jpenilla:run-task:2.3.1")
+    api("com.gradleup.shadow:com.gradleup.shadow.gradle.plugin:9.0.0-beta4")
 
     implementation("org.yaml:snakeyaml:2.2")
     implementation(gradleKotlinDsl())

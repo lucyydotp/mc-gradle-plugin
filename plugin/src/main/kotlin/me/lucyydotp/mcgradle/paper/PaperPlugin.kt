@@ -2,6 +2,9 @@ package me.lucyydotp.mcgradle.paper
 
 import io.papermc.paperweight.userdev.PaperweightUser
 import io.papermc.paperweight.userdev.PaperweightUserDependenciesExtension
+import io.papermc.paperweight.userdev.PaperweightUserExtension
+import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
+import io.papermc.paperweight.util.convertToFileProvider
 import me.lucyydotp.mcgradle.applyShadow
 import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.pluginJars
 import org.gradle.BuildAdapter
@@ -51,6 +54,8 @@ internal fun Project.applyPaper() {
     // Set up paperweight.
     apply<PaperweightUser>()
 
+    extensions.getByType<PaperweightUserExtension>().reobfArtifactConfiguration.set(ReobfArtifactConfiguration.MOJANG_PRODUCTION)
+
     dependencies.apply {
         extensions.getByType<PaperweightUserDependenciesExtension>()
             .paperDevBundle(paperConfig.version.map { "$it-R0.1-SNAPSHOT" })
@@ -77,14 +82,9 @@ internal fun Project.applyPaper() {
     }
 
     afterEvaluate {
-        tasks.withType<RunServer>().configureEach { task ->
-            task.version.set(paperConfig.version)
-            task.pluginJars(pluginRuntime.pluginJars())
+        tasks.withType<RunServer> {
+            pluginJars(pluginRuntime.pluginJars())
         }
-    }
-
-    tasks.named("build") {
-        it.dependsOn("reobfJar")
     }
 }
 
