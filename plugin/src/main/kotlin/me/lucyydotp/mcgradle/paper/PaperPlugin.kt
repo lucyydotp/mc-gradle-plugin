@@ -5,11 +5,8 @@ import io.papermc.paperweight.userdev.PaperweightUserDependenciesExtension
 import io.papermc.paperweight.userdev.PaperweightUserExtension
 import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import me.lucyydotp.mcgradle.applyShadow
-import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Property
 import org.gradle.jvm.tasks.Jar
@@ -66,15 +63,6 @@ internal fun Project.applyPaper() {
 
     // Create the paper-plugin.yml task.
     val pluginYmlTask = tasks.register<PaperPluginYmlTask>("pluginYml")
-
-    gradle.addBuildListener(object : BuildAdapter() {
-        override fun projectsEvaluated(gradle: Gradle) {
-            pluginRuntime.dependencies.forEach {
-                if (it !is ProjectDependency) return@forEach
-                pluginYmlTask.get().dependsOn(it.dependencyProject.tasks.named("build"))
-            }
-        }
-    })
 
     tasks.withType<Jar> {
         dependsOn(pluginYmlTask)

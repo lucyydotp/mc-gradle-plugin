@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "me.lucyydotp"
-version = "0.1.3"
+version = "1.0.0"
 
 kotlin {
     jvmToolchain(17)
@@ -16,7 +16,6 @@ kotlin {
 repositories {
     mavenCentral()
     gradlePluginPortal()
-//    maven("https://oss.sonatype.org/content/groups/public/")
 }
 
 dependencies {
