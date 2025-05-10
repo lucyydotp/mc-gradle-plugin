@@ -9,7 +9,7 @@ group = "me.lucyydotp"
 version = "0.1.3"
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
     explicitApi()
 }
 
@@ -20,30 +20,25 @@ repositories {
 }
 
 dependencies {
-    api("io.papermc.paperweight:paperweight-userdev:1.7.7")
+    api("io.papermc.paperweight:paperweight-userdev:2.0.0-beta.16")
     api("xyz.jpenilla:run-task:2.3.1")
-    api("com.gradleup.shadow:com.gradleup.shadow.gradle.plugin:9.0.0-beta4")
+    api("com.gradleup.shadow:com.gradleup.shadow.gradle.plugin:9.0.0-beta13")
 
     implementation("org.yaml:snakeyaml:2.2")
     implementation(gradleKotlinDsl())
 }
 
 gradlePlugin {
+    website = "https://github.com/lucyydotp/mc-gradle-plugin"
+    vcsUrl = "https://github.com/lucyydotp/mc-gradle-plugin"
+
     plugins {
         create("paper") {
             id = "me.lucyydotp.minecraft.paper"
+            displayName = "me.lucyydotp.minecraft.paper"
+            description = "Utilities for developing Paper plugins"
+            tags = setOf("minecraft", "paper")
             implementationClass = "me.lucyydotp.mcgradle.paper.PaperPlugin"
         }
     }
 }
-
-publishing.repositories.maven {
-    url = uri("https://maven.lucypoulton.net/releases")
-    val LUCY_MAVEN_USER: String by project
-    val LUCY_MAVEN_TOKEN: String by project
-    credentials {
-        username = LUCY_MAVEN_USER
-        password = LUCY_MAVEN_TOKEN
-    }
-}
-

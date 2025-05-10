@@ -5,6 +5,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.attributes.Attribute
 import java.io.File
 
@@ -58,7 +59,17 @@ public object PaperDependencyConfiguration {
             }
         }
             .outputs.files.singleFile
-        is ModuleDependency -> fileCollection(dep).singleFile
+
+
+        is ModuleDependency -> incoming
+            .artifactView { i ->
+                i.componentFilter {
+                    it is ModuleComponentIdentifier && it.group == dep.group && it.module == dep.name && it.version == dep.version
+                }
+            }
+            .artifacts
+            .artifactFiles.singleFile
+
         else -> error("Can't find plugin jar for $dep!")
     }
 

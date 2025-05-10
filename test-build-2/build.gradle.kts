@@ -9,6 +9,11 @@ paper {
     mainClass = "me.lucyydotp.mcgradle.papertest2.PaperTest2"
 }
 
+repositories {
+    mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/");w
+}
+
 dependencies {
     // just imagine the repo is configured
     shadow(project(":test-build"))
