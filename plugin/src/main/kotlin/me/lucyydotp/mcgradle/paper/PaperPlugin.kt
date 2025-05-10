@@ -4,9 +4,7 @@ import io.papermc.paperweight.userdev.PaperweightUser
 import io.papermc.paperweight.userdev.PaperweightUserDependenciesExtension
 import io.papermc.paperweight.userdev.PaperweightUserExtension
 import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
-import io.papermc.paperweight.util.convertToFileProvider
 import me.lucyydotp.mcgradle.applyShadow
-import me.lucyydotp.mcgradle.paper.PaperDependencyConfiguration.pluginJars
 import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -63,6 +61,7 @@ internal fun Project.applyPaper() {
 
     // Set up the plugin runtime configuration.
     val pluginRuntime = configurations.create(PaperDependencyConfiguration.PLUGIN_RUNTIME)
+    pluginRuntime.isTransitive = false
     configurations.named("compileOnly").configure { it.extendsFrom(pluginRuntime) }
 
     // Create the paper-plugin.yml task.
@@ -83,7 +82,7 @@ internal fun Project.applyPaper() {
 
     afterEvaluate {
         tasks.withType<RunServer> {
-            pluginJars(pluginRuntime.pluginJars())
+            pluginJars(pluginRuntime.files)
         }
     }
 }

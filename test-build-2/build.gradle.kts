@@ -11,11 +11,9 @@ paper {
 
 repositories {
     mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/");w
+    maven("https://repo.papermc.io/repository/maven-public/");
 }
 
 dependencies {
-    // just imagine the repo is configured
-    shadow(project(":test-build"))
     pluginRuntime(project(":test-build"))
 }

@@ -1,13 +1,8 @@
 package me.lucyydotp.mcgradle.paper
 
-import org.gradle.api.UnknownTaskException
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.attributes.Attribute
-import java.io.File
+import org.gradle.api.attributes.HasConfigurableAttributes
 
 /** Utilities for paper dependencies. */
 public object PaperDependencyConfiguration {
@@ -19,6 +14,9 @@ public object PaperDependencyConfiguration {
      */
     public const val PLUGIN_RUNTIME: String = "pluginRuntime"
 
+    // The attributes here are kinda hacky, as they have no effect on dependency resolution.
+    // They're intentionally not registered for this reason.
+
     /** Whether the dependency is optional. */
     public val OPTIONAL: Attribute<OptionalState> =
         Attribute.of("me.lucyydotp.minecraft.optional", OptionalState::class.java)
@@ -28,12 +26,12 @@ public object PaperDependencyConfiguration {
         Attribute.of("me.lucyydotp.minecraft.loadOrder", LoadOrder::class.java)
 
     /** Makes the dependency optional. If true, the plugin will load without this plugin installed. */
-    public fun ModuleDependency.optional() {
+    public fun <T> T.optional() where T : Dependency, T : HasConfigurableAttributes<*> {
         optional = OptionalState.OPTIONAL
     }
 
     /** Whether the module is optional for the plugin to load on a server. */
-    public var ModuleDependency.optional: OptionalState
+    public var <T> T.optional: OptionalState where T : Dependency, T : HasConfigurableAttributes<*>
         set(value) {
             attributes {
                 it.attribute(OPTIONAL, value)
@@ -42,38 +40,13 @@ public object PaperDependencyConfiguration {
         get() = attributes.getAttribute(OPTIONAL) ?: OptionalState.REQUIRED
 
     /** Whether the module is optional for the plugin to load on a server. */
-    public var ModuleDependency.loadOrder: LoadOrder
+    public var <T> T.loadOrder: LoadOrder where T : Dependency, T : HasConfigurableAttributes<*>
         set(value) {
             attributes {
                 it.attribute(LOAD_ORDER, value)
             }
         }
         get() = attributes.getAttribute(LOAD_ORDER) ?: LoadOrder.OMIT
-
-    public fun Configuration.pluginJar(dep: Dependency): File = when (dep) {
-        is ProjectDependency -> dep.dependencyProject.tasks.let {
-            try {
-                it.getByName("shadowJar")
-            } catch (ex: UnknownTaskException) {
-                it.getByName("jar")
-            }
-        }
-            .outputs.files.singleFile
-
-
-        is ModuleDependency -> incoming
-            .artifactView { i ->
-                i.componentFilter {
-                    it is ModuleComponentIdentifier && it.group == dep.group && it.module == dep.name && it.version == dep.version
-                }
-            }
-            .artifacts
-            .artifactFiles.singleFile
-
-        else -> error("Can't find plugin jar for $dep!")
-    }
-
-    public fun Configuration.pluginJars(): List<File> = dependencies.map { pluginJar(it) }
 }
 
 /** Whether a dependency plugin is required. */
